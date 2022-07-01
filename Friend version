@@ -1,0 +1,550 @@
+const { conversation } = require('@assistant/conversation');
+const functions = require('firebase-functions');
+
+const admin = require('firebase-admin'); 
+
+admin.initializeApp(functions.config().firebase);
+const db = admin.firestore();
+const dbUser = db.collection("users"); 
+
+
+
+const app = conversation({clientId: '300820406824-lhgokml9cno73dga27nrnoes2964bcql.apps.googleusercontent.com'});
+
+
+
+app.handle('userRecognition', conv => {
+ 
+  if (conv.user.verificationStatus == "VERIFIED") {
+  	if (conv.user.params.refName){
+
+ 			 conv.add('Hi. $user.params.refName.');
+       conv.scene.next.name = 'Start' ;
+   
+     }
+   
+     
+    else if (!conv.user.lastSeenTime){
+      conv.add('Welcome. My name is MindEating.');
+  	  conv.scene.next.name = 'NewUser';
+    }
+  
+  
+   else {
+                conv.scene.next.name = "Reset";
+            }
+ }
+   else {
+    conv.add("You can unfortunatly not Access MindEating Counselor if you are not verified. Try changing your Google asssistant settings. "); 
+    conv.scene.next.name = 'actions.page.END_CONVERSATION';
+  }
+  
+  });
+  
+  app.handle('nameConfirmed', conv => {
+      const name = conv.session.params.name;
+        const counter = 0;
+    const username = {
+   name
+  }; 
+  return dbUser.add(username).then ((docRef) => {
+    conv.user.params.refID = docRef.id;
+    conv.user.params.refName = name;
+    conv.user.params.counter = counter;
+     conv.scene.next.name = 'Start';
+   })    
+   .catch((error) => {
+  console.log('error',error);
+  conv.add("something went worng");
+               
+});   
+});
+app.handle('Reset', conv => {
+    conv.user.params.refName = false;
+    conv.user.params.counter = 0;
+    
+});
+
+
+app.handle('dbname', async conv => {
+   
+  const name = conv.session.params.rName; 
+
+	const snapshot = await dbUser.where('Name', '==', `${name}` ).limit(1).get();
+ 
+  if (snapshot.empty) {
+  			conv.scene.next.name = 'NewUser';
+   } 
+  snapshot.forEach(doc => {
+            conv.user.params.refID = doc.id;
+        conv.user.params.refName = name;
+          conv.add(`' <speak> Welcome back ${name}. <break time = "2"/> </speak>`);   
+       conv.scene.next.name = 'Start';
+    });
+        
+});
+app.handle('Chocolatereflecthandler', conv => {
+  const Question1 = conv.session.params.Question1;
+  const Question2 = conv.session.params.Question2;
+  const Chocolate1 = conv.session.params.Chocolate1;
+  const Chocolate2 =conv.session.params.Chocolate2;
+  const Chocolate3 = conv.session.params.Chocolate3;
+  const Chocolate4 =conv.session.params.Chocolate4;
+  const Chocolate5 =conv.session.params.Chocolate5;
+  const Chocolate6 =conv.session.params.Chocolate6;
+  const Chocolate7 =conv.session.params.Chocolate7;
+  const Chocolate8 =conv.session.params.Chocolate8;
+  const Chocolate9 =conv.session.params.Chocolate9;
+  const id = conv.user.params.refID;
+
+  const entry = {
+  Question1,
+  Question2,
+  Chocolate1,
+  Chocolate2,
+  Chocolate3,
+  Chocolate4,
+  Chocolate5,
+  Chocolate6,
+  Chocolate7,
+  Chocolate8,
+  Chocolate9};
+  
+console.log('entry',entry);
+    
+return dbUser.doc(`${id}` ).collection("reflect").add(entry).then(()=>{
+  conv.add('<speak>'+ 
+  'Well, done. You have finished today’s exercise. <break time="300ms"/>'+
+  'If you like, you can eat in this way for a few more bites  <break time="200ms"/> or until you finish your snack or meal.' +
+  'Otherwise <break time="300ms"/>, you can always go back to this mindful eating practice whenever you want.' +
+  '</speak>');
+}).catch((error) => {
+  console.log('error',error);
+  conv.add("something went worng");     
+}); 
+  });
+
+app.handle('Teareflecthandler', conv => {
+  const Question1 = conv.session.params.Question1;
+  const Question2 = conv.session.params.Question2;
+  const Tea1 = conv.session.params.Tea1;
+  const Tea2 =conv.session.params.Tea2;
+  const Tea3 = conv.session.params.Tea3;
+  const Tea4 =conv.session.params.Tea4;
+  const Tea5 =conv.session.params.Tea5;
+  const Tea6 =conv.session.params.Tea6;
+  const Tea7 = conv.session.params.Tea7;
+  const Tea8 =conv.session.params.Tea8;
+  const Tea9 =conv.session.params.Tea9;
+  const after1 = conv.session.params.after1;
+  const after2 =conv.session.params.after2;
+  const after3 =conv.session.params.after3;
+  const id = conv.user.params.refID;
+
+  const entry = {
+  Question1,
+  Question2,
+  Tea1,
+  Tea2,
+  Tea3,
+  Tea4,
+  Tea5,
+  Tea6,
+  Tea7,
+  Tea8,
+  Tea9,
+  after1,
+  after2,
+  after3};
+  
+console.log('entry',entry);
+    
+
+   return dbUser.doc(`${id}` ).collection("reflect").add(entry).then(()=>{
+  conv.add('<speak>'+ 
+  'I hope you can try eating this way a few more times. <break time="300ms"/>'+
+  'I think you might have more unique experiences with the food you eat.' +
+  '</speak>');
+}).catch((error) => {
+  console.log('error',error);
+  conv.add("something went worng");
+  
+               
+}); 
+  });
+
+app.handle('Raisinreflecthandler', conv => {
+  const Question1 = conv.session.params.Question1;
+  const Question2 = conv.session.params.Question2;
+  const Raisin1 = conv.session.params.Raisin1;
+  const Raisin2 =conv.session.params.Raisin2;
+  const Raisin3 = conv.session.params.Raisin3;
+  const Raisin4 =conv.session.params.Raisin4;
+  const Raisin5 =conv.session.params.Raisin5;
+  const Raisin6 =conv.session.params.Raisin6;
+  const Raisin7 = conv.session.params.Raisin7;
+  const Raisin8 =conv.session.params.Raisin8;
+  const Raisin9 =conv.session.params.Raisin9;
+  const id = conv.user.params.refID;
+
+  const entry = {
+  Question1,
+  Question2,
+  Raisin1,
+  Raisin2,
+  Raisin3,
+  Raisin4,
+  Raisin5,
+  Raisin6,
+  Raisin7,
+  Raisin8,
+  Raisin9};
+  
+console.log('entry',entry);
+    
+
+   return dbUser.doc(`${id}` ).collection("reflect").add(entry).then(()=>{
+  conv.add('<speak>'+ 
+  'Well, done. You have finished today’s exercise. <break time="300ms"/>'+
+  'If you like, you can eat in this way for a few more bites  <break time="200ms"/> or until you finish your snack or meal.' +
+  'Otherwise <break time="300ms"/>, you can always go back to this mindful eating practice whenever you want.' +
+  '</speak>');
+}).catch((error) => {
+  console.log('error',error);
+  conv.add("something went worng");
+  
+               
+}); 
+  });
+
+app.handle('Start', conv => {
+  
+  if (!conv.user.lastSeenTime){
+  conv.add('<speak>'+
+  'Hi, $user.params.refName. I would like to guide you to go through a mindful eating exercise <break time="100ms"/>, which assists you to slow down and pay more attention to the food you eat.<break time="100ms"/> ' +
+  'This exercise consists of five steps<break time="1s"/>, which is designed to help you cultivate mindful eating  <break time="300ms"/> by engaging in all of your five senses while eating. '+
+  'Are you ready for today’s exercise?'+
+  '</speak>');}  
+
+          else {
+           
+             conv.add(
+  'Are you ready for today’s exercise?');}  
+           });
+
+
+
+app.handle('Ready', conv => {  
+  
+  conv.add('<speak>'+
+  'what are you going to eat today?'+
+  '</speak>');}         
+                      
+  );
+
+app.handle('Questionraisin', conv => {  
+  
+  conv.add('<speak>'+
+  'Raisin? <break time="1s"/>I really like it, it is sweet, soft, and chewy. <break time="1s"/> But some raisins not only taste sweet, but they also taste a little sour.<break time="1s"/> '+
+  'I like sweet and sour raisins better.<break time="1s"/> What about you, Do you like it?'+
+  '</speak>');}         
+
+  );
+
+app.handle('Questionchocolate', conv => {  
+  
+  conv.add('<speak>'+
+  'chocolate? <break time="1s"/> chocolate is so good, It is sweet and smooth when it melts in my mouth <break time="1s"/> and some chocolate has a fruity flavor, which makes it even better.<break time="1s"/> '+
+  'What about you, Do you like it?   '+
+  '</speak>');}         
+
+  );
+
+app.handle('Questiontea', conv => {  
+  
+  conv.add('<speak>'+
+  'I like to drink tea! <break time="1s"/> But i often drink fruit tea, it has a richer fruity smell. But I have never tried Chinese tea before.<break time="1s"/> '+
+  'What about you, Do you like it?'+
+  '</speak>');}         
+
+  );
+
+app.handle('Question2', conv => {  
+  
+  conv.add('<speak>'+
+  'Okay, Let’s get started with the exercise and tell me your feelings along the way! <break time="1s"/> I hope you can have a unique experience by eating mindfully as I did.'+
+  'Are you ready?'+        
+  '</speak>');}         
+
+  );
+
+
+  
+app.handle('Raisin1', conv => {
+
+  conv.add('<speak>'+
+  'Let’s look at the raisin now, <break time="1s"/>'+
+  'what are the colors <break time="1s"/>, shapes, <break time="1s"/>, and textures?<break time="3s"/>'+
+  '</speak>');}
+  ); 
+  
+app.handle('Raisin2', conv => {
+  
+   conv.add('<speak>'+
+  'So now, let’s focus our attention on the sense of touch <break time="1s"/>, '+
+  '<break time="200ms"/> Pick up the raisin with your hands， <break time="1s"/> and feel the texture with your fingertips <break time="2s"/>.'+  
+  'What is the texture of the raisin?<break time="400ms"/>  is it rough<break time="400ms"/>, smooth<break time="400ms"/>, or has ridges<break time="400ms"/>?'+
+  '</speak>');}
+  ); 
+        
+
+
+app.handle('Raisin3', conv => {  
+  
+    conv.add('<speak>'+
+  'Now, we going to smell it. <break time="1s"/>'+
+  'Hold the raisin up to your nose and <break time="1s"/> and breathe deeply <break time="1s"/>.' +
+  'What do you smell? <break time="300ms"/> '+
+  '</speak>');}
+  );
+app.handle('Raisin4', conv => {
+  
+  conv.add('<speak>'+
+  'Good, now, let’s taste the raisin <break time="1s"/> Are you ready to shift your attention from sense of smells to sense of taste? <break time="1s"/>'+
+  '</speak>');}
+
+  );
+
+
+app.handle('Raisin5', conv => {
+  
+  conv.add('<speak>'+
+  'Put the raisin in your mouth <break time="1s"/>,  chew it slowly<break time="2s"/>, Do you notice any flavors?. <break time="2s"/>' +      
+  'What does the raisin taste like? <break time="1s"/> Can you notice any changes in taste and texture?'+  '</speak>');}
+
+  );
+
+
+app.handle('Raisin6', conv => {
+  
+  conv.add('<speak>'+
+  'What does the raisin taste like? <break time="1s"/> Can you notice any changes in taste and texture?'+
+  '</speak>');}
+
+  );
+
+app.handle('Raisin7', conv => {
+  
+  conv.add('<speak>'+
+  'Good, Let’s Continue to chew it,<break time="1s"/> Can you hear any sounds the raisin is making as you chew it? <break time="1s"/>'+
+  '</speak>');}
+
+  );
+
+
+app.handle('Raisin8', conv => {
+  
+  conv.add('<speak>'+
+  'You can be open to those sounds that may pop up. <break time="1s"/>, Then, you can feel how the raisin slides down your throat. <break time="2s"/>' +      
+  'What do you think of the raisin? <break time="400ms"/>'+
+  '</speak>');}
+
+  );
+
+app.handle('Raisin9', conv => {
+  
+  conv.add('<speak>'+
+  'How did it differ from your previous experiences with raisin?'+
+  '</speak>');}
+
+  );
+
+
+app.handle('Chocolate1', conv => {
+
+   conv.add('<speak>'+
+  'Let’s look at the chocolate now, <break time="1s"/>'+
+  'what are the colors <break time="400ms"/>, shapes, <break time="400ms"/>, and textures?<break time="3s"/>'+
+  '</speak>');}
+  ); 
+  
+app.handle('Chocolate2', conv => {
+  
+   conv.add('<speak>'+
+            
+  'So now, let’s focus our attention on the sense of touch. <break time="1s"/>, '+
+  'Put your fingers on the packaging and feel the texture.<break time="500ms"/>'+
+  '<break time="200ms"/> Then, we slowly open the wrapper <break time="2s"/>, and pick up a piece of chocolate. <break time="1s"/>'+                             
+  'What you feel when you open the wrapper?<break time="400ms"/>  Is it hard<break time="400ms"/>, or smooth? <break time="400ms"/>,'+
+  '</speak>');}
+  ); 
+        
+
+
+app.handle('Chocolate3', conv => {  
+  
+    conv.add('<speak>'+             
+  'Now, we going to smell it. <break time="1s"/>'+
+  'You bring the chocolate to your nose <break time="2s"/> and breathe deeply. <break time="2s"/> ' +
+  'What do you smell? <break time="1s"/>'+
+  
+  '</speak>');}
+  );
+app.handle('Chocolate4', conv => {
+  
+  conv.add('<speak>'+           
+  'Good, now, let’s taste the chocolate <break time="1s"/>  Are you ready to shift your attention from sense of smells to sense of taste? <break time="1s"/>'+
+  '</speak>');}
+  );
+
+app.handle('Chocolate5', conv => {
+  
+  conv.add('<speak>'+           
+  'Put the chocolate in your mouth <break time="1s"/>, and chew it <break time="2s"/>, Do you notice any flavors?' +      
+  '</speak>');}
+  );
+
+app.handle('Chocolate6', conv => {
+  
+  conv.add('<speak>'+                
+  'What does the chocolate taste like? <break time="1s"/> Can you notice any changes in taste and texture? <break time="1s"/>'+         
+  '</speak>');}
+  );
+
+
+app.handle('Chocolate7', conv => {
+  
+  conv.add('<speak>'+
+  'Good, Let’s Continue to chew it,<break time="1s"/> Can you hear any sounds the chocolate is making as you chew it? <break time="1s"/>'+
+  '</speak>');}
+
+  );
+
+
+app.handle('Chocolate8', conv => {
+  
+  conv.add('<speak>'+
+  'You can be open to those sounds that may pop up. <break time="1s"/> Then, you can feel how the chocolate slides down your throat. <break time="2s"/>' +      
+  'What do you think of the chocolate? <break time="1s"/>'+
+  '</speak>');}
+
+  );
+
+app.handle('Chocolate9', conv => {
+  
+  conv.add('<speak>'+
+  'How did it differ from your previous experiences with chocolate?'+
+  '</speak>');}
+
+  );
+
+app.handle('Tea1', conv => {
+
+  conv.add('<speak>'+
+  'Alright, let’s look at the teabag,<break time="1s"/>, put the teabag in a cup, and pour water over it.<break time="5s"/>'+
+  'Then,<break time="0.5s"/> can you see how the color of the water change？<break time="2s"/>'+
+  'and let us wait 1 minute. <break time="60s"/>'+
+  'Looking at the tea,<break time="1s"/> What do you see? <break time="1s"/> It there any change?'+
+  '</speak>');}
+  ); 
+  
+app.handle('Tea2', conv => {
+  
+   conv.add('<speak>'+
+  'So now, hold the cup <break time="3s"/>. '+
+  'Can you feel the warming of the cup. <break time="2s"/>' +
+  'How it feels when you touch the cup?'+
+  '</speak>');}
+  ); 
+        
+
+
+app.handle('Tea3', conv => {  
+  
+    conv.add('<speak>'+
+  'Now, we going to smell it. <break time="1s"/>'+
+  'Bring the tea to your nose <break time="2s"/> and breathe deeply <break time="2s"/>.' +
+  'What do you smell? '+
+  '</speak>');}
+  
+      
+  );
+app.handle('Tea4', conv => {
+  
+  conv.add('<speak>'+
+  'Good, It is time to taste it. <break time="1s"/>  Are you ready to shift your attention from sense of smells to sense of taste? <break time="1s"/>'+
+  '</speak>');}
+
+  );
+
+
+app.handle('Tea5', conv => {
+  
+  conv.add('<speak>'+
+  'Take a sip of tea.<break time="2s"/> and see what flavors come up.<break time="1s"/>' +
+  'How does the tea taste? <break time="2s"/>'+
+  '</speak>');}
+
+  );
+
+app.handle('Tea6', conv => {
+  
+  conv.add('<speak>'+
+  'Are you noticing the flavors change? <break time="2s"/> How it has changed'+
+  '</speak>');}
+
+  );
+app.handle('Tea7', conv => {
+  conv.add('<speak>'+
+  'Good, Let’s Continue to drink it,<break time="1s"/> Can you hear any sounds when you drink it? <break time="2s"/>'+
+  '</speak>');}
+
+  );
+
+app.handle('Tea8', conv => {
+  conv.add('<speak>'+
+  'You can be open to those sounds that may pop up. <break time="1s"/>, Then, you can feel how the tea slides down your throat. <break time="2s"/>' +      
+  'What do you think of the tea? <break time="2s"/>'+
+  '</speak>');}
+
+  );
+
+app.handle('Tea9', conv => {
+  conv.add('<speak>'+
+  'How did it differ from your previous experiences with tea?'+
+  '</speak>');}
+
+  );
+
+
+app.handle('after1', conv => {
+conv.add('<speak>'+
+  'Well, done <break time="1s"/>. You have finished today’s exercise.<break time="1s"/> I hope you had some unique experiences with the food you ate, after three days of exercise. <break time="1s"/> '+
+  'Can you tell me, what you think of mindful eating? <break time="3s"/> ' +  
+ '</speak>');}
+
+  );
+
+app.handle('after2', conv => {
+conv.add('<speak>'+
+  'How do you feel about mindful eating?'+
+ '</speak>');}
+
+  );
+
+
+app.handle('after3', conv => {
+conv.add('<speak>'+
+  'Has it made you think differently when you eat your meals?'+
+ '</speak>');}
+
+  );
+
+
+
+
+
+
+
+
+exports.ActionsOnGoogleFulfillment = functions.https.onRequest(app);

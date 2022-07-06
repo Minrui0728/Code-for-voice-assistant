@@ -7,7 +7,6 @@ admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 const dbUser = db.collection("users"); 
 
-
 const app = conversation({clientId: '827007077993-1n7nl7ie1ralg5p8bjf6ral14valad5u.apps.googleusercontent.com'});
 
 

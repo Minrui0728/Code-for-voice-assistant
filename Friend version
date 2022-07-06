@@ -8,7 +8,6 @@ const db = admin.firestore();
 const dbUser = db.collection("users"); 
 
 
-
 const app = conversation({clientId: '300820406824-lhgokml9cno73dga27nrnoes2964bcql.apps.googleusercontent.com'});
 
 
